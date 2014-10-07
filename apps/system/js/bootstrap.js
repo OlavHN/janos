@@ -197,6 +197,7 @@ function go(config) {
   // Autogrant permissions
   window.addEventListener('mozChromeEvent', function(evt) {
     var detail = evt.detail;
+
     switch (detail.type) {
     case 'permission-prompt':
       console.log('autogrant permissions for', detail.permissions);
@@ -205,7 +206,11 @@ function go(config) {
       ev2.initCustomEvent('mozContentEvent', true, true, {
         id: detail.id,
         type: 'permission-allow',
-        remember: true
+        remember: true,
+        choices: {
+          'audio-capture': '',
+          'video-capture': window.defaultCamera || 'back'
+        }
       });
       window.dispatchEvent(ev2);
       break;

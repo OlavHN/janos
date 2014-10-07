@@ -34,6 +34,7 @@ PreferencesBuilder.prototype.preparePref = function() {
   }
 
   this.prefs['b2g.system_startup_url'] = this.system;
+  this.prefs['security.csp.enable'] = false;
 
   this.domains = [this.config.GAIA_DOMAIN];
   this.config.GAIA_ALLAPPDIRS.split(' ').forEach(function(appdir) {
