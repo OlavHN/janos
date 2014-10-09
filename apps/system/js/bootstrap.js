@@ -85,7 +85,7 @@ function go(config) {
 
   window.enableWifi = function() {
     if (config.network && config.password) {
-      window.reconnectWifi = connectToWifi.bind(this, config.network, config.password);
+      // window.reconnectWifi = connectToWifi.bind(this, config.network, config.password);
       navigator.mozSettings.createLock().set({ 'wifi.enabled': true });
     }
     else {

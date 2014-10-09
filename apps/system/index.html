@@ -17,9 +17,92 @@
     <script defer src="js/doorbell.js"></script>
     <script defer src="js/bluetooth.js"></script>
     <script defer src="js/tracker.js"></script>
+    <script src="js/proximity.js"></script>
+
+    <style>
+      html, body, #frame {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      #close {
+        width: 100%;
+        height: 100%;
+        margin: 10px;
+        padding: 10px;
+      }
+
+    </style>
   </head>
 
   <body>
-    <h1>OMG WELCOME TO JANOS 1.0!</h1>
+    <div id="frame">
+      <div id='close'>
+        <div>
+          Select Team
+        </div>
+        <div>
+          RED <input type="radio" id="red" /> BLUE <input type="radio" id="blue" />
+        </div>
+        <div>
+          Hotspot?
+        </div>
+        <div>
+          <input type="checkbox" id="hotspot" />
+        </div>
+      </div>
+    </div>
+    <script>
+      var red = document.getElementById('red')
+      var blue = document.getElementById('blue')
+      var hotspot = document.getElementById('hotspot')
+      var frame = document.getElementById('frame')
+      var close = document.getElementById('close')
+
+      proximity.enableWifi(function() {
+        console.log('wifi enabled');
+      })
+
+      function toggleTeam() {
+        if (this.id === 'blue')
+          red.checked = !blue.checked;
+        else
+          blue.checked = !red.checked;
+
+        frame.style.backgroundColor = blue.checked ? 'blue' : 'red';
+      }
+
+      red.onclick = toggleTeam;
+      blue.onclick = toggleTeam;
+      toggleTeam();
+
+      function toggleHotspot() {
+        if (hotspot.checked) {
+          console.log('turning on hotspot');
+          proximity.turnOnHotspot(blue.checked ? 'blueHotspot' : 'redHotspot');
+          return;
+        }
+
+        proximity.turnOffHotspot();
+        console.log('scanning for networks');
+        (function scanForNetwork() {
+          proximity.wifiProximity(blue.checked ? 'redHotspot' : 'blueHotspot', function(distance) {
+            console.log('distance', distance);
+            var red = Math.round((distance / 100) * 255)
+            var green = 255 - Math.round((distance / 100) * 255)
+            close.style.backgroundColor = 'rgb(' + red + ', '+ green+', 0)';
+
+            if (!hotspot.checked)
+              scanForNetwork();
+          });
+        })()
+      }
+
+      hotspot.onclick = toggleHotspot;
+      toggleHotspot();
+    </script>
   </body>
 </html>
